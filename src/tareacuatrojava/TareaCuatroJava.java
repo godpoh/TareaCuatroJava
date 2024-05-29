@@ -42,20 +42,20 @@ public class TareaCuatroJava {
                         pairNOddDictionaries();
                         break;
                     case 3:
-                        generateArrayOfTemperatures();
+                        generateTemperatureMatrix();
+                        menuTemperatures();
                         break;
                     case 4:
                         System.out.println("Saliendo del programa...");
                         System.exit(0);
                     default:
-                        System.out.println("Digite una opcion valida. Intentelo de nuevo");
+                        System.out.println("Ingrese una opcion valide. Intentelo de nuevo.");
                 }
             } else {
                 scanner.next();
                 System.out.println("Error: No se permite el ingresar letras. Intentelo de nuevo solo con numeros");
             }
         }
-
     }
 
     public static void pairNOddLists() {
@@ -120,8 +120,142 @@ public class TareaCuatroJava {
         }
     }
 
-    public static void generateArrayOfTemperatures() {
+    public static void menuTemperatures() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Se ha creado la matriz para predecir las temperaturas: ");
+        while (true) {
+            System.out.println("Menu de temperaturas");
+            System.out.println("1. Mostrar temperaturas de cada semana");
+            System.out.println("2. Mostrar promedio de temperatura de cada semana");
+            System.out.println("3. Mostrar temperatura mas alta del mes");
+            System.out.println("4. Salir al menu principal");
 
+            if (scanner.hasNextInt()) {
+                int options = scanner.nextInt();
+
+                switch (options) {
+                    case 1:
+                        showTemperaturesOfWeek();
+                        break;
+                    case 2:
+                        showAverageTemperatureOfWeek();
+                        break;
+                    case 3:
+                        showHighestTemperatureOfMonth();
+                        break;
+                    case 4:
+                        return;
+                }
+            }
+        }
     }
 
+    public static int[][] generateTemperatureMatrix() {
+        Random random = new Random();
+        int[][] temperatureArray = new int[4][7];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 7; j++) {
+                temperatureArray[i][j] = random.nextInt(32) + 7;
+
+            }
+        }
+        return temperatureArray;
+    }
+
+    public static int[] findExtremeWeek(int[][] temperatureArray, int week) {
+        int min = temperatureArray[week][0];
+        int max = temperatureArray[week][0];
+        int maxDay = 0;
+        int minDay = 0;
+
+        for (int day = 1; day < 7; day++) {
+            if (temperatureArray[week][day] < min) {
+                min = temperatureArray[week][day];
+                minDay = day;
+            }
+            if (temperatureArray[week][day] > max) {
+                max = temperatureArray[week][day];
+                maxDay = day;
+            }
+        }
+        return new int[]{min, minDay, max, maxDay};
+    }
+
+    public static double calculateAverageWeek(int[][] temperatureArray, int week) {
+        double sum = 0;
+        for (int day = 0; day < 7; day++) {
+            sum += temperatureArray[week][day];
+        }
+        return sum / 7;
+    }
+
+    public static int[] findHighestTemperatureMonth(int[][] temperatureArray) {
+        int max = temperatureArray[0][0];
+        int maxWeek = 0;
+        int maxDay = 0;
+        for (int week = 0; week < 4; week++) {
+            for (int day = 0; day < 7; day++) {
+                if (temperatureArray[week][day] > max) {
+                    max = temperatureArray[week][day];
+                    maxWeek = week;
+                    maxDay = day;
+                }
+            }
+        }
+        return new int[]{max, maxWeek, maxDay};
+    }
+
+    public static void showTemperaturesOfWeek() {
+        int[][] temperatureArray = generateTemperatureMatrix();
+        boolean[][] extremesOfWeek = new boolean[4][7];
+
+        for (int week = 0; week < 4; week++) {
+            int[] extremes = findExtremeWeek(temperatureArray, week);
+            int min = extremes[0];
+            int minDay = extremes[1];
+            int max = extremes[2];
+            int maxDay = extremes[3];
+
+            System.out.println("Semana " + (week + 1) + ":");
+            System.out.println("Temperatura mas baja: " + min + " (Dia " + (minDay + 1) + ")");
+            System.out.println("Temperatura mas alta: " + max + " (Dia " + (maxDay + 1) + ")");
+
+            extremesOfWeek[week][minDay] = true;
+            extremesOfWeek[week][maxDay + 7] = true;
+        }
+
+        printMatrix(temperatureArray, extremesOfWeek);
+    }
+
+    public static void showAverageTemperatureOfWeek() {
+        int[][] temperatureArray = generateTemperatureMatrix();
+
+        for (int week = 0; week < 4; week++) {
+            double average = calculateAverageWeek(temperatureArray, week);
+            System.out.println("Semana " + (week + 1) + ": Promedio de temperatura: " + average);
+        }
+    }
+
+    public static void showHighestTemperatureOfMonth() {
+        int[][] temperatureArray = generateTemperatureMatrix();
+        int[] highestTemperatureMonth = findHighestTemperatureMonth(temperatureArray);
+
+        System.out.println("La temperatura mas alta del mes es: " + highestTemperatureMonth[0]
+                + " (semana " + (highestTemperatureMonth[1] + 1) + ", Dia " + (highestTemperatureMonth[2] + 1) + ")");
+    }
+
+    public static void printMatrix(int[][] temperatureArray, boolean[][] extremes) {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 7; j++) {
+                if (extremes[i][j]) {
+                    System.out.print("\033[31m" + temperatureArray[i][j] + " ");
+                } else if (extremes[i][j + 7]) {
+                    System.out.print("\033[34m" + temperatureArray[i][j] + " ");
+                } else {
+                    System.out.print(temperatureArray[i][j] + " ");
+                }
+            }
+            System.out.println("\033[0m");
+        }
+    }
 }
