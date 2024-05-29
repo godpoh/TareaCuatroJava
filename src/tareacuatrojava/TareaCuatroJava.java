@@ -155,14 +155,12 @@ public class TareaCuatroJava {
     public static void mainMethodTemperature() {
     int[][] vGenerateArray = generateArray();
 
-    // Imprimir la matriz con colores
     for (int i = 0; i < vGenerateArray.length; i++) {
         int lowestTemperature = Integer.MAX_VALUE;
         int highestTemperature = Integer.MIN_VALUE;
         int lowestColumn = -1;
         int highestColumn = -1;
 
-        // Encontrar el número más bajo y más alto en la fila actual
         for (int j = 0; j < vGenerateArray[i].length; j++) {
             int temperature = vGenerateArray[i][j];
             if (temperature < lowestTemperature) {
@@ -175,7 +173,6 @@ public class TareaCuatroJava {
             }
         }
 
-        // Imprimir la fila con los números resaltados en color
         for (int j = 0; j < vGenerateArray[i].length; j++) {
             if (j == lowestColumn) {
                 printColorTemperature(vGenerateArray[i][j], "blue");
@@ -188,7 +185,7 @@ public class TareaCuatroJava {
         System.out.println();
     }
 
-    menuTemperatures(vGenerateArray); // Llamar al menú después de imprimir la matriz
+    menuTemperatures(vGenerateArray); 
 }
 
 
@@ -205,12 +202,10 @@ public class TareaCuatroJava {
     }
 
     public static void printColorTemperature(int temperature, String color) {
-        // Define ANSI escape codes para cambiar el color del texto en la consola
         String ANSI_RESET = "\u001B[0m";
         String ANSI_BLUE = "\u001B[34m";
         String ANSI_RED = "\u001B[31m";
 
-        // Imprimir el número en el color especificado
         if (color.equals("blue")) {
             System.out.print(ANSI_BLUE + temperature + " " + ANSI_RESET);
         } else if (color.equals("red")) {
